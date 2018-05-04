@@ -11,24 +11,10 @@
 using namespace std;
 
 
-class data
+struct data
 {
     int c;
     int e;
-public:
-    int getcoeff(){
-        return c;
-    }
-    int getexp(){
-        return e;
-    }
-    void set(int a, int b){
-        c = a;
-        e = b;
-    }
-    void display(ofstream &fout){
-        fout << c << "X^" << e << " ";
-    }
 };
 
 struct node
@@ -75,9 +61,9 @@ public:
         cout << endl;
         while(temp!=NULL)
         {
-            if(temp->i.getcoeff()!=0)
+            if(temp->i.c>0)
             {
-                fout<<temp->i.getcoeff()<<"X^"<<temp->i.getexp()<<"  ";
+                fout<<temp->i.c<<"X^"<<temp->i.e<<"  ";
                 temp=temp->next;
             }
             else
@@ -88,7 +74,7 @@ public:
         cout << endl;
     }
     
-    list add(list b,ofstream &fout)
+    list add(list b)
     {
         node *temp=new node;
         temp = head;
@@ -97,7 +83,7 @@ public:
         list addition;
         while(temp!=NULL)
         {
-            if (temp->i.getcoeff()==0)
+            if (temp->i.c==0)
             {
                 temp = temp -> next;
             }
@@ -112,7 +98,7 @@ public:
         temp=head;
         while(temp!=NULL)
         {
-            if(temp->i.getcoeff()==0)
+            if(temp->i.c==0)
             {
                 temp=temp->next;
             }
@@ -122,16 +108,11 @@ public:
                 temp=temp->next;
                 a++;
             }
-        }
-        fout << "Summation of ";
-        for (int x=0;x<a;x++)
-        {
-            poly[x].display(fout);
         }
         temp=b.gethead();
         while(temp!=NULL)
         {
-            if(temp->i.getcoeff()==0)
+            if(temp->i.c==0)
             {
                 temp=temp->next;
             }
@@ -142,17 +123,12 @@ public:
                 a++;
             }
         }
-        fout << "+ ";
-        for (int x=0;x<a;x++)
-        {
-            poly[x].display(fout);
-        } 
         data t;
         for (int i=0 ; i<(count+count2)-1 ; i++)
         {
             for (int j = i+ 1 ; j< (count+count2)  ; j++)
             {
-                if(poly[i].getexp()>poly[j].getexp())
+                if(poly[i].e>poly[j].e)
                 {
                     t = poly[j];
                     poly[j] = poly[i];
@@ -167,14 +143,15 @@ public:
         {
             int n = i+1;
             int addcount = 1;
-            sum = poly[i].getcoeff();
-            while( poly[i].getexp() == poly[n].getexp())
+            sum = poly[i].c;
+            while( poly[i].e == poly[n].e)
             {
-                sum = sum + poly[n].getcoeff();
+                sum = sum + poly[n].c;
                 n++;
                 addcount++;
             };
-            add[y].set(sum,poly[i].getexp());
+            add[y].c = sum;
+            add[y].e = poly[i].e;
             i=i+addcount;
             y++;
         };
@@ -182,7 +159,6 @@ public:
         {
             addition.create(add[a]);
         }
-        fout << "\n\nEquals : ";
         return addition;
     }
     
@@ -193,7 +169,7 @@ public:
         temp=head;
         while(temp!=NULL)
         {
-            if (temp->i.getcoeff()==0)
+            if (temp->i.c==0)
             {
                 temp = temp -> next;
             }
@@ -224,7 +200,8 @@ int main(int argc, const char * argv[]) {
         data polyi;
         fin >> a ;
         fin >> b ;
-        polyi.set(a,b);
+        polyi.c = a;
+        polyi.e = b;
         list.create(polyi);
     };
     fin >> t2;
@@ -232,10 +209,15 @@ int main(int argc, const char * argv[]) {
     {
         data polyi;
         fin >> a>>b;
-        polyi.set(a,b);
+        polyi.c = a;
+        polyi.e = b;
         list2.create(polyi);
     };
-    sum = list.add(list2,fout);
+    sum = list.add(list2);
+    list.display(fout);
+    fout << "+  ";
+    list2.display(fout);
+    fout << endl << "Equals:" << endl;
     sum.display(fout);
     fin.close();
     fout.close();
