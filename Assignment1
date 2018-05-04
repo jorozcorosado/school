@@ -1,0 +1,93 @@
+//
+//  main.cpp
+//  Assignment 1
+//
+//  Created by Jonathan Orozco on 2/20/18.
+//  Copyright © 2018 Jonathan Orozco. All rights reserved.
+//
+#include <iostream>
+
+using namespace std;
+
+class dance
+{
+    int ID;int Hrs;float Rate;
+public:
+    void insertDance(int,int,float);
+    void readDance();
+    int getID();
+};
+
+class data
+{
+    dance a[2];
+public:
+    void insertData(dance,int a);
+    void readData();
+    void insertArray(int a[]);
+};
+    
+void printData(data);
+void SortData(data);
+
+
+int main(int argc, const char * argv[])
+{
+    dance info;
+    data all;
+    int array[2];
+    for (int i=0; i<=1;i++)
+    {
+        int a,b;
+        float c;
+        cout << "Please enter ID number for entry info #" << (i+1) << endl;
+        cin >> a;
+        cout << "Please enter Hours for entry info #" << (i+1) << endl;
+        cin >> b;
+        cout << "Please enter Rate for entry info #" << (i+1) << endl;
+        cin >> c;
+        info.insertDance(a,b,c);
+        all.insertData(info, i);
+    }
+    cout << "ID\t" << "HRS\t" << "RATE\n";
+    all.readData();
+    all.insertArray(array);
+    return 0;
+    
+};
+
+void dance::insertDance(int a,int b,float c)
+{
+    ID = a;
+    Hrs= b;
+    Rate= c;
+};
+void dance::readDance()
+{
+    cout << ID << "\t" << Hrs << "\t" << Rate << endl;
+}
+void data::insertData(dance e, int b)
+{
+    a[b] = e;
+};
+void data::readData()
+{
+    for (int i=0; i<=1; i++)
+    {
+        a[i].readDance();
+    }
+    cout << endl;
+};
+int dance::getID()
+{
+    int a;
+    a = ID;
+    return a;
+}
+void data::insertArray(int b[])
+{
+    for (int i=0; i<=1;i++)
+    {
+        b[i]=a[i].getID();
+    };
+};
