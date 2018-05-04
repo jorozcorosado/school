@@ -1,0 +1,243 @@
+//
+//  main.cpp
+//  Assignment 2
+//
+//  Created by Jonathan Orozco on 2/23/18.
+//  Copyright © 2018 Jonathan Orozco. All rights reserved.
+//
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+
+class data
+{
+    int c;
+    int e;
+public:
+    int getcoeff(){
+        return c;
+    }
+    int getexp(){
+        return e;
+    }
+    void set(int a, int b){
+        c = a;
+        e = b;
+    }
+    void display(ofstream &fout){
+        fout << c << "X^" << e << " ";
+    }
+};
+
+struct node
+{
+    data i;
+    node *next;
+    
+};
+
+class list
+{
+    node *head, *tail;
+public:
+    list()
+    {
+        head=NULL;
+        tail=NULL;
+    }
+    void create(data value)
+    {
+        node *temp=new node;
+        temp->i=value;
+        temp->next=NULL;
+        if(head==NULL)
+        {
+            head=temp;
+            tail=temp;
+            temp=NULL;
+        }
+        else
+        {
+            tail->next=temp;
+            tail=temp;
+        }
+    }
+    node * gethead()
+    {
+        return head;
+    }
+    void display(ofstream &fout)
+    {
+        node *temp=new node;
+        temp=head;
+        cout << endl;
+        while(temp!=NULL)
+        {
+            if(temp->i.getcoeff()!=0)
+            {
+                fout<<temp->i.getcoeff()<<"X^"<<temp->i.getexp()<<"  ";
+                temp=temp->next;
+            }
+            else
+            {
+                temp=temp->next;
+            }
+        }
+        cout << endl;
+    }
+    
+    list add(list b,ofstream &fout)
+    {
+        node *temp=new node;
+        temp = head;
+        int count2,a=0;
+        int count=0;
+        list addition;
+        while(temp!=NULL)
+        {
+            if (temp->i.getcoeff()==0)
+            {
+                temp = temp -> next;
+            }
+            else
+            {
+                temp=temp -> next;
+                count++;
+            }
+        }
+        count2 = b.count();
+        data poly[count + count2];
+        temp=head;
+        while(temp!=NULL)
+        {
+            if(temp->i.getcoeff()==0)
+            {
+                temp=temp->next;
+            }
+            else
+            {
+                poly[a] = temp->i;
+                temp=temp->next;
+                a++;
+            }
+        }
+        fout << "Summation of ";
+        for (int x=0;x<a;x++)
+        {
+            poly[x].display(fout);
+        }
+        temp=b.gethead();
+        while(temp!=NULL)
+        {
+            if(temp->i.getcoeff()==0)
+            {
+                temp=temp->next;
+            }
+            else
+            {
+                poly[a] = temp->i;
+                temp=temp->next;
+                a++;
+            }
+        }
+        fout << "+ ";
+        for (int x=0;x<a;x++)
+        {
+            poly[x].display(fout);
+        } 
+        data t;
+        for (int i=0 ; i<(count+count2)-1 ; i++)
+        {
+            for (int j = i+ 1 ; j< (count+count2)  ; j++)
+            {
+                if(poly[i].getexp()>poly[j].getexp())
+                {
+                    t = poly[j];
+                    poly[j] = poly[i];
+                    poly[i]=t;
+                };
+            }
+        }
+        data add[count+count2];
+        int sum;
+        int y= 0;
+        for (int i=0; i<count+count2 ;)
+        {
+            int n = i+1;
+            int addcount = 1;
+            sum = poly[i].getcoeff();
+            while( poly[i].getexp() == poly[n].getexp())
+            {
+                sum = sum + poly[n].getcoeff();
+                n++;
+                addcount++;
+            };
+            add[y].set(sum,poly[i].getexp());
+            i=i+addcount;
+            y++;
+        };
+        for(int a=0;a<y; a++)
+        {
+            addition.create(add[a]);
+        }
+        fout << "\n\nEquals : ";
+        return addition;
+    }
+    
+    int count()
+    {
+        node *temp=new node;
+        int count=0;
+        temp=head;
+        while(temp!=NULL)
+        {
+            if (temp->i.getcoeff()==0)
+            {
+                temp = temp -> next;
+            }
+            else
+            {
+                temp=temp -> next;
+                count++;
+            }
+        }
+        return count;
+    }
+};
+
+
+
+
+int main(int argc, const char * argv[]) {
+    list list,list2,sum;
+    int a,b;
+    ifstream fin;
+    ofstream fout;
+    fin.open("indata.txt");
+    fout.open("outdata.txt");
+    int t,t2;
+    fin >> t;
+    for (int i=0; i < t ; i++)
+    {
+        data polyi;
+        fin >> a ;
+        fin >> b ;
+        polyi.set(a,b);
+        list.create(polyi);
+    };
+    fin >> t2;
+    for (int i=0; i < t2 ; i++)
+    {
+        data polyi;
+        fin >> a>>b;
+        polyi.set(a,b);
+        list2.create(polyi);
+    };
+    sum = list.add(list2,fout);
+    sum.display(fout);
+    fin.close();
+    fout.close();
+    return 0;
+}
